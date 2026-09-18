@@ -1,0 +1,12 @@
+node_modules/
+.next/
+dist/
+.env*
+!.env.example
+coverage/
+test-results/
+playwright-report/
+*.log
+tsconfig.tsbuildinfo
+data/import-review/
+data/source-workbooks/
