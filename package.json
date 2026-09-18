@@ -1,0 +1,60 @@
+{
+  "name": "fop-schedule-generator",
+  "version": "1.0.0",
+  "description": "Faculty of Pharmacy timetable generator",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "dev": "concurrently -k -n web,api \"next dev\" \"tsx watch --env-file=.env.local server/index.ts\"",
+    "build": "next build && esbuild server/index.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/server.js",
+    "start": "concurrently -k -n web,api \"next start\" \"node --env-file=.env.local dist/server.js\"",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "db:migrate": "node --env-file=.env.local scripts/migrate.mjs",
+    "db:seed": "node --env-file=.env.local scripts/migrate.mjs --seed",
+    "db:demo": "node --env-file=.env.local scripts/migrate.mjs --demo",
+    "test:db": "tsx tests/database-check.ts",
+    "test:e2e": "playwright test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aksh-1h/FOP-Schedule-Generator.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/aksh-1h/FOP-Schedule-Generator/issues"
+  },
+  "homepage": "https://github.com/aksh-1h/FOP-Schedule-Generator#readme",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.116.0",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "helmet": "^8.3.0",
+    "lucide-react": "^1.47.0",
+    "next": "^16.3.5",
+    "postgres": "^3.4.9",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
+    "@playwright/test": "^1.63.0",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.1",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "concurrently": "^10.0.5",
+    "esbuild": "^0.28.2",
+    "prettier": "^3.9.7",
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.1"
+  },
+  "private": true
+}
