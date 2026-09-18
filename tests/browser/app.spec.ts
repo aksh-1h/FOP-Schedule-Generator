@@ -23,7 +23,18 @@ async function signedIn(page: import("@playwright/test").Page) {
     localStorage.setItem(
       "sb-ljxnneomrukyvtulskoh-auth-token",
       JSON.stringify({
-        access_token: btoa(JSON.stringify({alg:'HS256',typ:'JWT'}))+'.'+btoa(JSON.stringify({sub:'00000000-0000-4000-8000-000000000001',exp:Math.floor(Date.now()/1000)+3600,aud:'authenticated',role:'authenticated'}))+'.testsignature',
+        access_token:
+          btoa(JSON.stringify({ alg: "HS256", typ: "JWT" })) +
+          "." +
+          btoa(
+            JSON.stringify({
+              sub: "00000000-0000-4000-8000-000000000001",
+              exp: Math.floor(Date.now() / 1000) + 3600,
+              aud: "authenticated",
+              role: "authenticated",
+            }),
+          ) +
+          ".testsignature",
         refresh_token: "test-refresh",
         expires_at: Math.floor(Date.now() / 1000) + 3600,
         expires_in: 3600,
@@ -115,14 +126,14 @@ test("dashboard, master filters, generation, timetable and comboboxes", async ({
   await page
     .getByRole("link", { name: "Faculty timetable", exact: true })
     .click();
-  const combo = page.getByRole("combobox",{name:'Faculty',exact:true});
+  const combo = page.getByRole("combobox", { name: "Faculty", exact: true });
   await combo.fill("Faculty PH");
   await page.getByRole("option", { name: "Faculty PH (PH)" }).click();
   await expect(
     page.locator(".timetable").getByText("Subject PH").first(),
   ).toBeVisible();
   await page.getByRole("link", { name: "Room occupancy", exact: true }).click();
-  await page.getByRole("combobox",{name:'Room',exact:true}).fill("PH");
+  await page.getByRole("combobox", { name: "Room", exact: true }).fill("PH");
   await page.getByRole("option", { name: "PH · lab" }).click();
   await expect(
     page.locator(".timetable").getByText("Subject PH").first(),

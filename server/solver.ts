@@ -675,8 +675,25 @@ function addIdle(
       if (
         es.some((e) => e.batch_id && e.snapshot?.session_type === "lab") &&
         !es.some((e) => e.snapshot?.session_type === "practice_school")
-      )
-        idle(t.id, null, day, start, start + 2, true);
+      ) {
+        for (const group of data.groups.filter((g) => g.term_id === t.id)) {
+          const windowEntries = entries.filter(
+            (e) =>
+              e.entry_type === "placement" &&
+              e.term_id === t.id &&
+              e.day_of_week === day &&
+              e.start_slot <= start + 2 &&
+              e.end_slot >= start &&
+              (!e.group_id || e.group_id === group.id),
+          );
+          if (windowEntries.some((e) => !e.batch_id)) continue;
+          const batches = data.batches.filter((b) => b.group_id === group.id);
+          if (
+            batches.some((b) => !windowEntries.some((e) => e.batch_id === b.id))
+          )
+            idle(t.id, group.id, day, start, start + 2, true);
+        }
+      }
     }
   for (const a of adjustments)
     for (const g of data.groups.filter((g) => g.term_id === a.term_id)) {

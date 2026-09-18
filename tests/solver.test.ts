@@ -8,6 +8,34 @@ import {
 } from "../server/solver";
 import { fingerprint } from "../server/app";
 describe("hard constraints and snapshot safety", () => {
+  it("does not label fully occupied lab batches as idle Practice School", () => {
+    const d = fixture();
+    for (const b of d.batches.filter((b) =>
+      d.groups.some((g) => g.id === b.group_id && g.term_id === "BPHARM-7"),
+    ))
+      add(d, b.id, "lab", 3, "BPHARM-7", "batch", {
+        group_id: b.group_id,
+        batch_id: b.id,
+      });
+    const r = solve(d, "odd");
+    expect(r.status).toBe("success");
+    for (const idle of r.entries.filter(
+      (e) => e.idle_label === "Practice School",
+    )) {
+      const batches = d.batches.filter((b) => b.group_id === idle.group_id);
+      expect(
+        batches.some(
+          (b) =>
+            !r.entries.some(
+              (e) =>
+                e.batch_id === b.id &&
+                e.day_of_week === idle.day_of_week &&
+                e.start_slot === idle.start_slot,
+            ),
+        ),
+      ).toBe(true);
+    }
+  });
   it("schedules all three courses with shared resources without clashes", () => {
     const d = fixture();
     const a = add(d, "a", "theory", 6);

@@ -176,8 +176,13 @@ export function Workspace({
           );
         }
       } catch (e) {
-        console.error('Workspace load failed',e);
-        if (mounted) setError(e instanceof Error && e.message ? e.message : 'Unable to load your workspace. Please sign in again or retry.');
+        console.error("Workspace load failed", e);
+        if (mounted)
+          setError(
+            e instanceof Error && e.message
+              ? e.message
+              : "Unable to load your workspace. Please sign in again or retry.",
+          );
       } finally {
         if (mounted) setLoading(false);
       }
