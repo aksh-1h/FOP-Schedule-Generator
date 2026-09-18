@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowRight,
   CalendarDays,
@@ -8,23 +8,26 @@ import {
   Clock3,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/client";
+import { signIn } from "@/lib/client";
 export default function Login() {
   const [email, setEmail] = useState(""),
     [password, setPassword] = useState(""),
     [busy, setBusy] = useState(false),
     [error, setError] = useState("");
   const router = useRouter();
+  const [demoEnabled, setDemoEnabled] = useState(false);
+  useEffect(() => {
+    fetch("/api/demo/config")
+      .then((r) => r.json())
+      .then((d) => setDemoEnabled(d.enabled === true))
+      .catch(() => {});
+  }, []);
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
     setError("");
     try {
-      const { error } = await supabase().auth.signInWithPassword({
-        email,
-        password,
-      });
-      if (error) throw error;
+      await signIn(email, password);
       router.replace("/college");
     } catch (e) {
       setError((e as Error).message);
@@ -87,6 +90,17 @@ export default function Login() {
           <span className="pill">Administration portal</span>
           <h2>Welcome back</h2>
           <p className="muted">Sign in to plan your college’s academic week.</p>
+          {demoEnabled && (
+            <div className="notice">
+              <div>
+                <strong>Demo access available</strong>
+                <p>
+                  Use demo@fop.local with the test password in the README. Demo
+                  data is synthetic and resets when the server restarts.
+                </p>
+              </div>
+            </div>
+          )}
           <form onSubmit={submit}>
             <label>
               Email address

@@ -23,7 +23,7 @@ import {
   X,
   RefreshCw,
 } from "lucide-react";
-import { api, supabase } from "@/lib/client";
+import { api, hasSession, signOut } from "@/lib/client";
 import type { College, Dataset, Generation } from "@/lib/types";
 import { MasterData } from "./master-data";
 import { TimetableViewer } from "./timetable";
@@ -146,10 +146,7 @@ export function Workspace({
     setOverview(null);
     async function load() {
       try {
-        const {
-          data: { session },
-        } = await supabase().auth.getSession();
-        if (!session) {
+        if (!(await hasSession())) {
           router.replace("/login");
           return;
         }
@@ -319,7 +316,7 @@ export function Workspace({
               className="icon-button"
               aria-label="Sign out"
               onClick={async () => {
-                await supabase().auth.signOut();
+                await signOut();
                 router.replace("/login");
               }}
             >

@@ -9,6 +9,7 @@ import { createHash } from "node:crypto";
 import { z } from "zod";
 import { solve } from "./solver";
 import type { Dataset, Generation } from "../src/lib/types";
+import { demoRouter } from "./demo";
 
 export function fingerprint(data: Dataset): string {
   const canonical = (x: unknown): unknown =>
@@ -58,6 +59,12 @@ export function createApp() {
   app.use(helmet());
   app.use(express.json({ limit: "16kb" }));
   app.get("/api/health", (_req, res) => res.json({ status: "ok" }));
+  app.use(
+    "/api",
+    demoRouter(
+      process.env.DEMO_MODE === "true" && process.env.NODE_ENV !== "production",
+    ),
+  );
   app.use("/api", async (req, res, next) => {
     try {
       const token = req.headers.authorization?.match(/^Bearer (.+)$/)?.[1];
@@ -451,14 +458,12 @@ export function createApp() {
       const e = error as { status?: number; message?: string; code?: string };
       if (!(error instanceof ApiError))
         console.error("API error:", e.code || "internal", e.message);
-      res
-        .status(error instanceof ApiError ? error.status : 500)
-        .json({
-          error:
-            error instanceof ApiError
-              ? error.message
-              : "The request failed. Check the database setup and server logs.",
-        });
+      res.status(error instanceof ApiError ? error.status : 500).json({
+        error:
+          error instanceof ApiError
+            ? error.message
+            : "The request failed. Check the database setup and server logs.",
+      });
     },
   );
   return app;

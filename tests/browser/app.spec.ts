@@ -1,6 +1,33 @@
 import { test, expect } from "@playwright/test";
 import { fixture, add } from "../fixtures";
 import { solve } from "../../server/solver";
+test("real demo login, generation and sign out without Supabase tables", async ({
+  page,
+}) => {
+  await page.goto("/login");
+  await page.getByLabel("Email address").fill("demo@fop.local");
+  await page.getByLabel("Password", { exact: true }).fill("FopDemo!2026");
+  await page.getByRole("button", { name: "Sign in", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "A well-planned week starts here." }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Demo College of Pharmacy (sample data)").first(),
+  ).toBeVisible();
+  await page
+    .getByRole("button", { name: "Generate timetable", exact: true })
+    .click();
+  await expect(page.getByText("Your weekly timetable is ready.")).toBeVisible();
+  await page
+    .getByRole("link", { name: "Group timetable", exact: true })
+    .first()
+    .click();
+  await expect(page.getByText("Lunch break")).toBeVisible();
+  await page.getByRole("button", { name: "Sign out", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Welcome back" }),
+  ).toBeVisible();
+});
 const d = fixture();
 add(d, "PT", "theory", 3);
 add(d, "PH", "lab", 3, "BPHARM-1", "batch");

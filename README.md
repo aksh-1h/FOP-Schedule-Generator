@@ -4,6 +4,17 @@ Next.js App Router frontend, Express API, Supabase Auth/PostgreSQL and a bounded
 
 ## Local setup
 
+### Demo credentials
+
+For local testing without Supabase tables, set `DEMO_MODE=true` in `.env.local` (already enabled in the current workspace). Sign in with:
+
+- Email: `demo@fop.local`
+- Password: `FopDemo!2026`
+
+This account opens an isolated synthetic college and uses the real scheduling solver. It never reads or writes your Supabase data. Each login has its own in-memory generation history, sessions expire after eight hours, and restarting the API resets the demo. Set `DEMO_PASSWORD` to change the test password. Demo mode defaults to off and is always off when the API runs with `NODE_ENV=production`.
+
+After `npm run build`, run `npm start` and open http://localhost:3000/login to test locally.
+
 Requires Node.js 22 or newer. The repository uses a locked npm dependency tree.
 
 ```sh
